@@ -66,17 +66,17 @@ namespace Eleicoes.Tests
         public void CadastrarCandidato_CandidatoValido_DeveSerUltimoDaListaDeCandidatos()
         {
             // Arrange
-            var candidato1 = "José da Silva";
-            var candidato2 = "Maria da Silva";
+            var nomeCandidato1 = "José da Silva";
+            var nomeCandidato2 = "Maria da Silva";
 
             var urna = new Urna();
-            urna.CadastrarCandidato(candidato1);
+            urna.CadastrarCandidato(nomeCandidato1);
 
             // Act
-            urna.CadastrarCandidato(candidato2);
+            urna.CadastrarCandidato(nomeCandidato2);
 
             // Assert
-            urna.Candidatos?.Last().Nome.Should().Be(candidato2);
+            urna.Candidatos?.Last().Nome.Should().Be(nomeCandidato2);
         }
         #endregion
 
@@ -86,12 +86,12 @@ namespace Eleicoes.Tests
         public void Votar_CandidatoNaoCadastrado_DeveRetornarFalse()
         {
             // Arrange
-            var candidato1 = "José da Silva";
-            var candidato2 = "Maria da Silva";
+            var nomeCandidato1 = "José da Silva";
+            var nomeCandidato2 = "Maria da Silva";
 
             var urna = new Urna();
-            urna.CadastrarCandidato(candidato1);
-            urna.CadastrarCandidato(candidato2);
+            urna.CadastrarCandidato(nomeCandidato1);
+            urna.CadastrarCandidato(nomeCandidato2);
 
             // Act
             var result = urna.Votar("Telma da Silva");
@@ -107,12 +107,12 @@ namespace Eleicoes.Tests
         public void Votar_CandidatoNaoCadastrado_DeveRetornarTrue()
         {
             // Arrange
-            var candidato1 = "José da Silva";
-            var candidato2 = "Maria da Silva";
+            var nomeCandidato1 = "José da Silva";
+            var nomeCandidato2 = "Maria da Silva";
 
             var urna = new Urna();
-            urna.CadastrarCandidato(candidato1);
-            urna.CadastrarCandidato(candidato2);
+            urna.CadastrarCandidato(nomeCandidato1);
+            urna.CadastrarCandidato(nomeCandidato2);
 
             // Act
             var result = urna.Votar("Maria da Silva");
@@ -128,21 +128,21 @@ namespace Eleicoes.Tests
         public void MostrarResultadoEleicao_EleicaoValida_DeveRetornarMensagem()
         {
             // Arrange
-            var candidato1 = "José da Silva";
-            var candidato2 = "Maria da Silva";
+            var nomeCandidato1 = "José da Silva";
+            var nomeCandidato2 = "Maria da Silva";
 
             var urna = new Urna();
             urna.IniciarEncerrarEleicao();
 
-            urna.CadastrarCandidato(candidato1);
-            urna.CadastrarCandidato(candidato2);
+            urna.CadastrarCandidato(nomeCandidato1);
+            urna.CadastrarCandidato(nomeCandidato2);
 
-            urna.Votar(candidato1);
-            urna.Votar(candidato1);
-            urna.Votar(candidato1);
-            urna.Votar(candidato2);
+            urna.Votar(nomeCandidato1);
+            urna.Votar(nomeCandidato1);
+            urna.Votar(nomeCandidato1);
+            urna.Votar(nomeCandidato2);
 
-            var expected = $"Nome vencedor: {candidato1}. Votos: 3";
+            var expected = $"Nome vencedor: {nomeCandidato1}. Votos: 3";
 
             // Act
             var result = urna.MostrarResultadoEleicao();
