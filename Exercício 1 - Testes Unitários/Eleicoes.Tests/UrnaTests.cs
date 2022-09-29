@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using System.Runtime.CompilerServices;
 using System.Xml.XPath;
 
 namespace Eleicoes.Tests
@@ -22,7 +23,7 @@ namespace Eleicoes.Tests
             // Assert
             urna.VencedorEleicao.Should().Be(vencedorEleicao);
             urna.VotosVencedor.Should().Be(votosVencedor);
-            Assert.Equal(candidatos, urna.Candidatos);
+            urna.Candidatos.Should().BeEquivalentTo(candidatos);
             urna.EleicaoAtiva.Should().Be(eleicaoAtiva);
         }
         #endregion
