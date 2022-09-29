@@ -1,4 +1,4 @@
-# Módulo 7 - Testes Automatizados I - Tarefas
+# Exercício 1 - Testes Unitários
 
 # Enunciado
 
@@ -20,13 +20,14 @@ As seguintes classes e métodos devem ser criadas:
 - Resultado da eleição
 - Cadastro de candidato
 - Iniciar/Finalizar eleição
-
+---
 **Crie um novo projeto, na mesma Solution do projeto da urna eletrônica, do tipo xUnit Test. Nesse projeto, faça:**
 
 Para a classe Candidato, crie primeiro os testes utilizando TDD. Construa os seguintes cenários de teste:
 
 - Validar se a quantidade de votos está correta após o cadastro do candidato e após a inserção de um novo voto
 - Validar se o nome do candidato está correto após o cadastro do candidato
+
 
 Para a classe Urna, utilize o código dos métodos já prontos e construa os seguintes cenários de teste:
 
