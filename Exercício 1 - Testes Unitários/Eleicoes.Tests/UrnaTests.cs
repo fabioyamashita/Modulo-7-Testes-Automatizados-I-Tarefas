@@ -81,9 +81,11 @@ namespace Eleicoes.Tests
         #endregion
 
         #region Validar o método de votação quando é informado um candidato não cadastrado
-        [Fact(DisplayName = "Votar em candidato não cadastrado")]
+        [Theory(DisplayName = "Votar em candidato não cadastrado")]
         [Trait("Urna Eletrônica", "Urna Testes")]
-        public void Votar_CandidatoNaoCadastrado_DeveRetornarFalse()
+        [InlineData("Telma da Silva")]
+        [InlineData("José de Alencar")]
+        public void Votar_CandidatoNaoCadastrado_DeveRetornarFalse(string nomeCandidato)
         {
             // Arrange
             var nomeCandidato1 = "José da Silva";
@@ -94,7 +96,7 @@ namespace Eleicoes.Tests
             urna.CadastrarCandidato(nomeCandidato2);
 
             // Act
-            var result = urna.Votar("Telma da Silva");
+            var result = urna.Votar(nomeCandidato);
 
             // Assert
             result.Should().BeFalse();
@@ -102,9 +104,11 @@ namespace Eleicoes.Tests
         #endregion
 
         #region Validar o método de votação quando é informado um candidato cadastrado
-        [Fact(DisplayName = "Votar em candidato cadastrado")]
+        [Theory(DisplayName = "Votar em candidato cadastrado")]
         [Trait("Urna Eletrônica", "Urna Testes")]
-        public void Votar_CandidatoNaoCadastrado_DeveRetornarTrue()
+        [InlineData("José da Silva")]
+        [InlineData("Maria da Silva")]
+        public void Votar_CandidatoNaoCadastrado_DeveRetornarTrue(string nomeCandidato)
         {
             // Arrange
             var nomeCandidato1 = "José da Silva";
@@ -115,7 +119,7 @@ namespace Eleicoes.Tests
             urna.CadastrarCandidato(nomeCandidato2);
 
             // Act
-            var result = urna.Votar("Maria da Silva");
+            var result = urna.Votar(nomeCandidato);
 
             // Assert
             result.Should().BeTrue();
