@@ -1,6 +1,4 @@
 ﻿using FluentAssertions;
-using System.Runtime.CompilerServices;
-using System.Xml.XPath;
 
 namespace Eleicoes.Tests
 {
