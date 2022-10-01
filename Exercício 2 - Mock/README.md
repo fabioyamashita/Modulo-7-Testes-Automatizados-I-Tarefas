@@ -1,6 +1,6 @@
 # Descrição
 
-Fazer uma classe de testes para a PlayerService e testar o método GetForLeague.
+Fazer projeto de testes para a PlayerService e testar o método GetForLeague.
 
 ## Observações
 
