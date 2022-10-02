@@ -80,6 +80,7 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
 
             return player;
         }
+
         public List<Team> CreateListOfTeamsUsingBogus(int numberOfTeams)
         {
             var teams = new List<Team>();
