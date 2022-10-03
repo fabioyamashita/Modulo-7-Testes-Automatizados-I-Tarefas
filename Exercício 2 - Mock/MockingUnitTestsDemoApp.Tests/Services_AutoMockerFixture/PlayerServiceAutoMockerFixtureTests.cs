@@ -20,7 +20,6 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
         }
 
         #region GetByID TESTS 
-        // USING AUTOFIXTURE TO CREATE A FAKE PLAYER OBJECT
         [Fact(DisplayName = "GetByID Method when ID is valid")]
         [Trait("Ex.2", "PlayerServiceAutoMockerFixture Tests")]
         public void GetByID_IdIsValid_ShouldReturnPlayer()
@@ -40,7 +39,6 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
                 .BeEquivalentTo(player);
         }
 
-        // USING BOGUS TO CREATE A FAKE PLAYER OBJECT
         [Fact(DisplayName = "GetByID Method when ID is invalid")]
         [Trait("Ex.2", "PlayerServiceAutoMockerFixture Tests")]
         public void GetByID_IdIsNotValid_ShouldThrowAnException()
@@ -52,14 +50,13 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
 
             _playerServiceTestsFixture.Mocker.GetMock<IPlayerRepository>()
                 .Setup(pr => pr.GetByID(invalidId))
-                .Throws(new Exception("Id does not exists!"));
+                .Returns<Player>(null);
 
             // Act
-            Action act = () => _subject.GetByID(invalidId);
+            var action = _subject.GetByID(invalidId);
 
             // Assert
-            act.Should().Throw<Exception>()
-                .WithMessage("Id does not exists!");
+            action.Should().BeNull();
         }
         #endregion
 
@@ -92,7 +89,6 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
             var actual = _subject.GetForLeague(validLeagueID);
 
             // Assert
-            actual.Should().NotBeNullOrEmpty();
             actual.Should().HaveCount(totalPlayers);
 
             _playerServiceTestsFixture.Mocker.GetMock<ITeamRepository>()
@@ -121,6 +117,31 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
 
             _playerServiceTestsFixture.Mocker.GetMock<ITeamRepository>()
                 .Verify(tr => tr.GetForLeague(invalidLeagueID), Times.Never);
+
+            _playerServiceTestsFixture.Mocker.GetMock<IPlayerRepository>()
+                .Verify(pr => pr.GetForTeam(It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact(DisplayName = "GetForLeague Method with Valid League ID But No Team Is Found")]
+        [Trait("Ex.2", "PlayerServiceAutoMockerFixture Tests")]
+        public void GetForLeague_LeagueIDIsValidButNoTeamIsFound_ShouldThrowANullReferenceException()
+        {
+            // Arrange
+            var leagueID = 1;
+
+            _playerServiceTestsFixture.Mocker.GetMock<ILeagueRepository>()
+                .Setup(lr => lr.IsValid(leagueID))
+                .Returns(true);
+
+            _playerServiceTestsFixture.Mocker.GetMock<ITeamRepository>()
+                .Setup(tr => tr.GetForLeague(leagueID))
+                .Returns<List<Team>>(null);
+
+            // Act
+            Action act = () => _subject.GetForLeague(leagueID);
+
+            // Assert
+            act.Should().Throw<NullReferenceException>();
 
             _playerServiceTestsFixture.Mocker.GetMock<IPlayerRepository>()
                 .Verify(pr => pr.GetForTeam(It.IsAny<int>()), Times.Never);
