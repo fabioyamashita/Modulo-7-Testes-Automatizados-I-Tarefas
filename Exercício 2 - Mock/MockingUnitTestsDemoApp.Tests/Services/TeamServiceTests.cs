@@ -6,11 +6,6 @@ using MockingUnitTestsDemoApp.Impl.Models;
 using MockingUnitTestsDemoApp.Impl.Repositories.Interfaces;
 using MockingUnitTestsDemoApp.Impl.Services;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace MockingUnitTestsDemoApp.Tests.Services
