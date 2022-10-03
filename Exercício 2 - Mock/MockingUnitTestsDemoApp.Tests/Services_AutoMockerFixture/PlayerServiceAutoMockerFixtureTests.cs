@@ -41,7 +41,7 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
 
         [Fact(DisplayName = "GetByID Method when ID is invalid")]
         [Trait("Ex.2", "PlayerServiceAutoMockerFixture Tests")]
-        public void GetByID_IdIsNotValid_ShouldThrowAnException()
+        public void GetByID_IdIsNotValid_ShouldBeNull()
         {
             // Arrange
             Player player = _playerServiceTestsFixture.CreatePlayerUsingBogus();

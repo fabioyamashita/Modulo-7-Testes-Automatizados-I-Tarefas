@@ -49,7 +49,7 @@ namespace MockingUnitTestsDemoApp.Tests.Services
         // USING BOGUS TO CREATE A FAKE PLAYER OBJECT
         [Fact(DisplayName = "GetByID Method when ID is invalid")]
         [Trait("Ex.2", "PlayerService Tests")]
-        public void GetByID_IdIsNotValid_ShouldThrowAnException()
+        public void GetByID_IdIsNotValid_ShouldBeNull()
         {
             // Arrange
             Player player = new Faker<Player>("pt_BR")
