@@ -34,7 +34,7 @@ namespace MockingUnitTestsDemoApp.Tests.Services
         public void GetByID_IdIsValid_ShouldReturnPlayer()
         {
             // Arrange
-            Player player = new Fixture().Create<Player>();
+            Player player = CreatePlayerUsingAutoFixture();
 
             _mockPlayerRepository.Setup(pr => pr.GetByID(player.ID))
                 .Returns(player);
@@ -52,15 +52,7 @@ namespace MockingUnitTestsDemoApp.Tests.Services
         public void GetByID_IdIsNotValid_ShouldBeNull()
         {
             // Arrange
-            Player player = new Faker<Player>("pt_BR")
-                .CustomInstantiator(f => new Player
-                {
-                    ID = f.Random.Int(1, 10),
-                    FirstName = f.Name.FirstName(Name.Gender.Male),
-                    LastName = f.Name.LastName(Name.Gender.Male),
-                    DateOfBirth = f.Date.Between(new DateTime(1980, 1, 1), new DateTime(2000, 1, 1)),
-                    TeamID = f.Random.Int(1, 5)
-                });
+            Player player = CreatePlayerUsingBogus();
 
             var invalidId = player.ID - 100;
 
@@ -139,6 +131,27 @@ namespace MockingUnitTestsDemoApp.Tests.Services
         #endregion
 
         #region Helpers Methods
+        private Player CreatePlayerUsingAutoFixture()
+        {
+            return new Fixture().Create<Player>();
+        }
+
+        private Player CreatePlayerUsingBogus()
+        {
+            Player player = new Faker<Player>("pt_BR")
+                .CustomInstantiator(f => new Player
+                {
+                    ID = f.Random.Int(1, 10),
+                    FirstName = f.Name.FirstName(Name.Gender.Male),
+                    LastName = f.Name.LastName(Name.Gender.Male),
+                    DateOfBirth = f.Date.Between(new DateTime(1980, 1, 1), new DateTime(2000, 1, 1)),
+                    TeamID = f.Random.Int(1, 5)
+
+                });
+
+            return player;
+        }
+
         private List<Team> CreateListOfTeams(int numberOfTeams)
         {
             var teams = new List<Team>();
