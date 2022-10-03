@@ -4,9 +4,9 @@ Fazer projeto de testes para a PlayerService e testar o método GetForLeague.
 
 ## Solução
 
-Foram feitos testes para os métodos GetByID e GetForLeague da classe PlayerService.
+Foram feitos testes para os métodos GetByID (2 testes) e GetForLeague (3 testes) da classe PlayerService.
 
-Foram feitos testes para o método Search da classe TeamService.
+Foram feitos testes para o método Search (4 testes) da classe TeamService.
 
 ## Observações
 
