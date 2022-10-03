@@ -178,15 +178,7 @@ namespace MockingUnitTestsDemoApp.Tests.Services
 
             for (int i = 0; i < numberOfPlayers; i++)
             {
-                Player player = new Faker<Player>("pt_BR")
-                    .CustomInstantiator(f => new Player
-                    {
-                        ID = f.Random.Int(1, numberOfPlayers),
-                        FirstName = f.Name.FirstName(Name.Gender.Male),
-                        LastName = f.Name.LastName(Name.Gender.Male),
-                        DateOfBirth = f.Date.Between(new DateTime(1980, 1, 1), new DateTime(2000, 1, 1)),
-                        TeamID = f.Random.Int(1, 5)
-                    });
+                Player player = CreatePlayerUsingBogus();
                 players.Add(player);
             }
 
