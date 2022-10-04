@@ -44,16 +44,12 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
         public void GetByID_IdIsNotValid_ShouldBeNull()
         {
             // Arrange
-            Player player = _testsFixture.CreatePlayerUsingBogus();
-
-            var invalidId = player.ID - 100;
-
             _testsFixture.Mocker.GetMock<IPlayerRepository>()
-                .Setup(pr => pr.GetByID(invalidId))
+                .Setup(pr => pr.GetByID(It.IsAny<int>()))
                 .Returns<Player>(null);
 
             // Act
-            var action = _subject.GetByID(invalidId);
+            var action = _subject.GetByID(It.IsAny<int>());
 
             // Assert
             action.Should().BeNull();
@@ -66,33 +62,33 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
         public void GetForLeague_IsSuccessful_ShouldReturnListOfPlayer()
         {
             // Arrange
-            var validLeagueID = 1;
             var numberOfTeams = 2;
             var numberOfPlayersPerTeam = 2;
             var totalPlayers = numberOfTeams * numberOfPlayersPerTeam;
-            var teams = _testsFixture.CreateListOfTeamsUsingBogus(numberOfTeams);
-            var players = _testsFixture.CreateListOfPlayersUsingBogus(numberOfPlayersPerTeam);
 
             _testsFixture.Mocker.GetMock<ILeagueRepository>()
-                .Setup(lr => lr.IsValid(validLeagueID))
+                .Setup(lr => lr.IsValid(It.IsAny<int>()))
                 .Returns(true);
 
             _testsFixture.Mocker.GetMock<ITeamRepository>()
-                .Setup(tr => tr.GetForLeague(validLeagueID))
-                .Returns(teams);
+                .Setup(tr => tr.GetForLeague(It.IsAny<int>()))
+                .Returns(_testsFixture.CreateListOfTeamsUsingBogus(numberOfTeams));
 
             _testsFixture.Mocker.GetMock<IPlayerRepository>()
                 .Setup(pr => pr.GetForTeam(It.IsAny<int>()))
-                .Returns(players);
+                .Returns(_testsFixture.CreateListOfPlayersUsingBogus(numberOfPlayersPerTeam));
 
             // Act
-            var actual = _subject.GetForLeague(validLeagueID);
+            var actual = _subject.GetForLeague(It.IsAny<int>());
 
             // Assert
             actual.Should().HaveCount(totalPlayers);
 
+            _testsFixture.Mocker.GetMock<ILeagueRepository>()
+                .Verify(lr => lr.IsValid(It.IsAny<int>()), Times.Once);
+
             _testsFixture.Mocker.GetMock<ITeamRepository>()
-                .Verify(tr => tr.GetForLeague(validLeagueID), Times.Once);
+                .Verify(tr => tr.GetForLeague(It.IsAny<int>()), Times.Once);
 
             _testsFixture.Mocker.GetMock<IPlayerRepository>()
                 .Verify(pr => pr.GetForTeam(It.IsAny<int>()), Times.Exactly(numberOfTeams));
@@ -103,20 +99,18 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
         public void GetForLeague_LeagueIDIsNotValid_ShouldReturnAnEmptyPlayerList()
         {
             // Arrange
-            var invalidLeagueID = 2;
-
             _testsFixture.Mocker.GetMock<ILeagueRepository>()
-                .Setup(ml => ml.IsValid(invalidLeagueID))
+                .Setup(ml => ml.IsValid(It.IsAny<int>()))
                 .Returns(false);
 
             // Act
-            var actual = _subject.GetForLeague(invalidLeagueID);
+            var actual = _subject.GetForLeague(It.IsAny<int>());
 
             // Assert
             actual.Should().HaveCount(0);
 
             _testsFixture.Mocker.GetMock<ITeamRepository>()
-                .Verify(tr => tr.GetForLeague(invalidLeagueID), Times.Never);
+                .Verify(tr => tr.GetForLeague(It.IsAny<int>()), Times.Never);
 
             _testsFixture.Mocker.GetMock<IPlayerRepository>()
                 .Verify(pr => pr.GetForTeam(It.IsAny<int>()), Times.Never);
@@ -127,18 +121,16 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
         public void GetForLeague_LeagueIDIsValidButNoTeamIsFound_ShouldThrowANullReferenceException()
         {
             // Arrange
-            var leagueID = 1;
-
             _testsFixture.Mocker.GetMock<ILeagueRepository>()
-                .Setup(lr => lr.IsValid(leagueID))
+                .Setup(lr => lr.IsValid(It.IsAny<int>()))
                 .Returns(true);
 
             _testsFixture.Mocker.GetMock<ITeamRepository>()
-                .Setup(tr => tr.GetForLeague(leagueID))
+                .Setup(tr => tr.GetForLeague(It.IsAny<int>()))
                 .Returns<List<Team>>(null);
 
             // Act
-            Action act = () => _subject.GetForLeague(leagueID);
+            Action act = () => _subject.GetForLeague(It.IsAny<int>());
 
             // Assert
             act.Should().Throw<NullReferenceException>();

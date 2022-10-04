@@ -32,22 +32,22 @@ namespace MockingUnitTestsDemoApp.Tests.Services
         {
             // Arrange
             var teamSearch = CreateTeamSearch(SearchDateDirection.NewerThan);
-            var validLeagueID = teamSearch.LeagueID;
             teamSearch.FoundingDate = new DateTime(1950, 1, 1);
 
             var numberOfTeams = 2;
-            var teams = CreateListOfTeams(numberOfTeams);
 
-            _mockLeagueRepository.Setup(lr => lr.IsValid(validLeagueID)).Returns(true);
+            _mockLeagueRepository.Setup(lr => lr.IsValid(teamSearch.LeagueID))
+                .Returns(true);
 
-            _mockTeamRepository.Setup(tr => tr.GetForLeague(validLeagueID)).Returns(teams);
+            _mockTeamRepository.Setup(tr => tr.GetForLeague(teamSearch.LeagueID))
+                .Returns(CreateListOfTeams(numberOfTeams));
 
             // Act
             var actual = _subject.Search(teamSearch);
 
             // Assert
             actual.Should().HaveCount(numberOfTeams);
-            _mockTeamRepository.Verify(tr => tr.GetForLeague(validLeagueID), Times.Once);
+            _mockTeamRepository.Verify(tr => tr.GetForLeague(teamSearch.LeagueID), Times.Once);
         }
 
         [Fact(DisplayName = "Search Method is successful With Older Than Search")]
@@ -56,22 +56,22 @@ namespace MockingUnitTestsDemoApp.Tests.Services
         {
             // Arrange
             var teamSearch = CreateTeamSearch(SearchDateDirection.OlderThan);
-            var validLeagueID = teamSearch.LeagueID;
             teamSearch.FoundingDate = new DateTime(1950, 1, 1);
 
             var numberOfTeams = 2;
-            var teams = CreateListOfTeams(numberOfTeams);
 
-            _mockLeagueRepository.Setup(lr => lr.IsValid(validLeagueID)).Returns(true);
+            _mockLeagueRepository.Setup(lr => lr.IsValid(teamSearch.LeagueID))
+                .Returns(true);
 
-            _mockTeamRepository.Setup(tr => tr.GetForLeague(validLeagueID)).Returns(teams);
+            _mockTeamRepository.Setup(tr => tr.GetForLeague(teamSearch.LeagueID))
+                .Returns(CreateListOfTeams(numberOfTeams));
 
             // Act
             var actual = _subject.Search(teamSearch);
 
             // Assert
             actual.Should().HaveCount(0);
-            _mockTeamRepository.Verify(tr => tr.GetForLeague(validLeagueID), Times.Once);
+            _mockTeamRepository.Verify(tr => tr.GetForLeague(teamSearch.LeagueID), Times.Once);
         }
 
         [Fact(DisplayName = "Search Method with Invalid League ID")]
@@ -80,15 +80,16 @@ namespace MockingUnitTestsDemoApp.Tests.Services
         {
             // Arrange
             var teamSearch = CreateTeamSearch(SearchDateDirection.NewerThan);
-            var invalidLeagueID = teamSearch.LeagueID;
-            _mockLeagueRepository.Setup(lr => lr.IsValid(invalidLeagueID)).Returns(false);
+
+            _mockLeagueRepository.Setup(lr => lr.IsValid(teamSearch.LeagueID))
+                .Returns(false);
 
             // Act
             var actual = _subject.Search(teamSearch);
 
             // Assert
             actual.Should().HaveCount(0);
-            _mockTeamRepository.Verify(tr => tr.GetForLeague(invalidLeagueID), Times.Never);
+            _mockTeamRepository.Verify(tr => tr.GetForLeague(teamSearch.LeagueID), Times.Never);
         }
 
         [Fact(DisplayName = "Search Method with Valid League ID But No Team Is Found")]
@@ -97,16 +98,19 @@ namespace MockingUnitTestsDemoApp.Tests.Services
         {
             // Arrange
             var teamSearch = CreateTeamSearch(SearchDateDirection.NewerThan);
-            var leagueID = teamSearch.LeagueID;
-            _mockLeagueRepository.Setup(lr => lr.IsValid(leagueID)).Returns(true);
-            _mockTeamRepository.Setup(tr => tr.GetForLeague(leagueID)).Returns<List<Team>>(null);
+
+            _mockLeagueRepository.Setup(lr => lr.IsValid(teamSearch.LeagueID))
+                .Returns(true);
+
+            _mockTeamRepository.Setup(tr => tr.GetForLeague(teamSearch.LeagueID))
+                .Returns<List<Team>>(null);
 
             // Act
             Action act = () => _subject.Search(teamSearch);
 
             // Assert
             act.Should().Throw<ArgumentNullException>();
-            _mockTeamRepository.Verify(tr => tr.GetForLeague(leagueID), Times.Once);
+            _mockTeamRepository.Verify(tr => tr.GetForLeague(teamSearch.LeagueID), Times.Once);
         }
         #endregion
 

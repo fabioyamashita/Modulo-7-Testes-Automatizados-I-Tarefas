@@ -6,6 +6,7 @@ using MockingUnitTestsDemoApp.Impl.Models;
 using MockingUnitTestsDemoApp.Impl.Repositories.Interfaces;
 using MockingUnitTestsDemoApp.Impl.Services;
 using Moq;
+using System.Numerics;
 using Xunit;
 
 namespace MockingUnitTestsDemoApp.Tests.Services
@@ -52,15 +53,11 @@ namespace MockingUnitTestsDemoApp.Tests.Services
         public void GetByID_IdIsNotValid_ShouldBeNull()
         {
             // Arrange
-            Player player = CreatePlayerUsingBogus();
-
-            var invalidId = player.ID - 100;
-
-            _mockPlayerRepository.Setup(pr => pr.GetByID(invalidId))
+            _mockPlayerRepository.Setup(pr => pr.GetByID(It.IsAny<int>()))
                 .Returns<Player>(null);
 
             // Act
-            var actual = _subject.GetByID(invalidId);
+            var actual = _subject.GetByID(It.IsAny<int>());
 
             // Assert
             actual.Should().BeNull();
@@ -73,25 +70,27 @@ namespace MockingUnitTestsDemoApp.Tests.Services
         public void GetForLeague_IsSuccessful_ShouldReturnListOfPlayer()
         {
             // Arrange
-            var validLeagueID = 1;
             var numberOfTeams = 2;
             var numberOfPlayersPerTeam = 2;
             var totalPlayers = numberOfTeams * numberOfPlayersPerTeam;
-            var teams = CreateListOfTeams(numberOfTeams);
-            var players = CreateListOfPlayers(numberOfPlayersPerTeam);
 
-            _mockLeagueRepository.Setup(lr => lr.IsValid(validLeagueID)).Returns(true);
+            _mockLeagueRepository.Setup(lr => lr.IsValid(It.IsAny<int>()))
+                .Returns(true);
 
-            _mockTeamRepository.Setup(tr => tr.GetForLeague(validLeagueID)).Returns(teams);
+            _mockTeamRepository.Setup(tr => tr.GetForLeague(It.IsAny<int>()))
+                .Returns(CreateListOfTeams(numberOfTeams));
 
-            _mockPlayerRepository.Setup(pr => pr.GetForTeam(It.IsAny<int>())).Returns(players);
+            _mockPlayerRepository.Setup(pr => pr.GetForTeam(It.IsAny<int>()))
+                .Returns(CreateListOfPlayers(numberOfPlayersPerTeam));
 
             // Act
-            var actual = _subject.GetForLeague(validLeagueID);
+            var actual = _subject.GetForLeague(It.IsAny<int>());
 
             // Assert
+            actual.Should().NotBeEmpty();
             actual.Should().HaveCount(totalPlayers);
-            _mockTeamRepository.Verify(tr => tr.GetForLeague(validLeagueID), Times.Once);
+            _mockLeagueRepository.Verify(lr => lr.IsValid(It.IsAny<int>()), Times.Once);
+            _mockTeamRepository.Verify(tr => tr.GetForLeague(It.IsAny<int>()), Times.Once);
             _mockPlayerRepository.Verify(pr => pr.GetForTeam(It.IsAny<int>()), Times.Exactly(numberOfTeams));
         }
 
@@ -100,15 +99,17 @@ namespace MockingUnitTestsDemoApp.Tests.Services
         public void GetForLeague_LeagueIDIsNotValid_ShouldReturnAnEmptyPlayerList()
         {
             // Arrange
-            var invalidLeagueID = 2;
-            _mockLeagueRepository.Setup(lr => lr.IsValid(invalidLeagueID)).Returns(false);
+            _mockLeagueRepository.Setup(lr => lr.IsValid(It.IsAny<int>()))
+                .Returns(false);
 
             // Act
-            var actual = _subject.GetForLeague(invalidLeagueID);
+            var actual = _subject.GetForLeague(It.IsAny<int>());
 
             // Assert
+            actual.Should().BeEmpty();
             actual.Should().HaveCount(0);
-            _mockTeamRepository.Verify(tr => tr.GetForLeague(invalidLeagueID), Times.Never);
+            _mockLeagueRepository.Verify(lr => lr.IsValid(It.IsAny<int>()), Times.Once);
+            _mockTeamRepository.Verify(tr => tr.GetForLeague(It.IsAny<int>()), Times.Never);
             _mockPlayerRepository.Verify(pr => pr.GetForTeam(It.IsAny<int>()), Times.Never);
         }
 
@@ -117,15 +118,19 @@ namespace MockingUnitTestsDemoApp.Tests.Services
         public void GetForLeague_LeagueIDIsValidButNoTeamIsFound_ShouldThrowANullReferenceException()
         {
             // Arrange
-            var leagueID = 1;
-            _mockLeagueRepository.Setup(lr => lr.IsValid(leagueID)).Returns(true);
-            _mockTeamRepository.Setup(tr => tr.GetForLeague(leagueID)).Returns<List<Team>>(null);
+            _mockLeagueRepository.Setup(lr => lr.IsValid(It.IsAny<int>()))
+                .Returns(true);
+
+            _mockTeamRepository.Setup(tr => tr.GetForLeague(It.IsAny<int>()))
+                .Returns<List<Team>>(null);
 
             // Act
-            Action act = () => _subject.GetForLeague(leagueID);
+            Action act = () => _subject.GetForLeague(It.IsAny<int>());
 
             // Assert
             act.Should().Throw<NullReferenceException>();
+            _mockLeagueRepository.Verify(lr => lr.IsValid(It.IsAny<int>()), Times.Once);
+            _mockTeamRepository.Verify(tr => tr.GetForLeague(It.IsAny<int>()), Times.Once);
             _mockPlayerRepository.Verify(pr => pr.GetForTeam(It.IsAny<int>()), Times.Never);
         }
         #endregion

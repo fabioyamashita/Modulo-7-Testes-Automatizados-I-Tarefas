@@ -26,19 +26,17 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
         {
             // Arrange
             var teamSearch = _testsFixture.CreateTeamSearchUsingBogus(SearchDateDirection.NewerThan);
-            var validLeagueID = teamSearch.LeagueID;
             teamSearch.FoundingDate = new DateTime(1950, 1, 1);
 
             var numberOfTeams = 2;
-            var teams = _testsFixture.CreateListOfTeamsUsingBogus(numberOfTeams);
 
             _testsFixture.Mocker.GetMock<ILeagueRepository>()
-                .Setup(lr => lr.IsValid(validLeagueID))
+                .Setup(lr => lr.IsValid(teamSearch.LeagueID))
                 .Returns(true);
 
             _testsFixture.Mocker.GetMock<ITeamRepository>()
-                .Setup(tr => tr.GetForLeague(validLeagueID))
-                .Returns(teams);
+                .Setup(tr => tr.GetForLeague(teamSearch.LeagueID))
+                .Returns(_testsFixture.CreateListOfTeamsUsingBogus(numberOfTeams));
 
             // Act
             var actual = _subject.Search(teamSearch);
@@ -47,7 +45,7 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
             actual.Should().HaveCount(numberOfTeams);
 
             _testsFixture.Mocker.GetMock<ITeamRepository>()
-                .Verify(tr => tr.GetForLeague(validLeagueID), Times.Once);
+                .Verify(tr => tr.GetForLeague(teamSearch.LeagueID), Times.Once);
         }
 
         [Fact(DisplayName = "Search Method is successful With Older Than Search")]
@@ -56,19 +54,17 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
         {
             // Arrange
             var teamSearch = _testsFixture.CreateTeamSearchUsingBogus(SearchDateDirection.OlderThan);
-            var validLeagueID = teamSearch.LeagueID;
             teamSearch.FoundingDate = new DateTime(1950, 1, 1);
 
             var numberOfTeams = 2;
-            var teams = _testsFixture.CreateListOfTeamsUsingBogus(numberOfTeams);
-
+ 
             _testsFixture.Mocker.GetMock<ILeagueRepository>()
-                .Setup(lr => lr.IsValid(validLeagueID))
+                .Setup(lr => lr.IsValid(teamSearch.LeagueID))
                 .Returns(true);
 
             _testsFixture.Mocker.GetMock<ITeamRepository>()
-                .Setup(tr => tr.GetForLeague(validLeagueID))
-                .Returns(teams);
+                .Setup(tr => tr.GetForLeague(teamSearch.LeagueID))
+                .Returns(_testsFixture.CreateListOfTeamsUsingBogus(numberOfTeams));
 
             // Act
             var actual = _subject.Search(teamSearch);
@@ -77,7 +73,7 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
             actual.Should().HaveCount(0);
 
             _testsFixture.Mocker.GetMock<ITeamRepository>()
-                .Verify(tr => tr.GetForLeague(validLeagueID), Times.Once);
+                .Verify(tr => tr.GetForLeague(teamSearch.LeagueID), Times.Once);
         }
 
         [Fact(DisplayName = "Search Method with Invalid League ID")]
@@ -86,10 +82,9 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
         {
             // Arrange
             var teamSearch = _testsFixture.CreateTeamSearchUsingBogus(SearchDateDirection.NewerThan);
-            var invalidLeagueID = teamSearch.LeagueID;
-
+   
             _testsFixture.Mocker.GetMock<ILeagueRepository>()
-                .Setup(lr => lr.IsValid(invalidLeagueID))
+                .Setup(lr => lr.IsValid(teamSearch.LeagueID))
                 .Returns(false);
 
             // Act
@@ -98,7 +93,7 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
             // Assert
             actual.Should().HaveCount(0);
             _testsFixture.Mocker.GetMock<ITeamRepository>()
-                .Verify(tr => tr.GetForLeague(invalidLeagueID), Times.Never);
+                .Verify(tr => tr.GetForLeague(teamSearch.LeagueID), Times.Never);
         }
 
         [Fact(DisplayName = "Search Method with Valid League ID But No Team Is Found")]
@@ -107,14 +102,13 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
         {
             // Arrange
             var teamSearch = _testsFixture.CreateTeamSearchUsingBogus(SearchDateDirection.NewerThan);
-            var leagueID = teamSearch.LeagueID;
 
             _testsFixture.Mocker.GetMock<ILeagueRepository>()
-                .Setup(lr => lr.IsValid(leagueID))
+                .Setup(lr => lr.IsValid(teamSearch.LeagueID))
                 .Returns(true);
 
             _testsFixture.Mocker.GetMock<ITeamRepository>()
-                .Setup(tr => tr.GetForLeague(leagueID))
+                .Setup(tr => tr.GetForLeague(teamSearch.LeagueID))
                 .Returns<List<Team>>(null);
 
             // Act
@@ -124,7 +118,7 @@ namespace MockingUnitTestsDemoApp.Tests.Services_AutoMockerFixture
             act.Should().Throw<ArgumentNullException>();
 
             _testsFixture.Mocker.GetMock<ITeamRepository>()
-                .Verify(tr => tr.GetForLeague(leagueID), Times.Once);
+                .Verify(tr => tr.GetForLeague(teamSearch.LeagueID), Times.Once);
         }
         #endregion
 
